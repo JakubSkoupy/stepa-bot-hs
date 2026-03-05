@@ -16,6 +16,8 @@ dependencies:
   - load-env
   - http-conduit
   - aeson
+  - containers
+  - unordered-containers
 
 executables:
   my-bot-exe:
