@@ -1,0 +1,31 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           StepaBot
+version:        0.1.0.0
+author:         Jakub Skoupý
+maintainer:     jakub.skoupy02@gmail.com
+copyright:      Jakub Skoupý 2026
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+executable my-bot-exe
+  main-is: Main.hs
+  other-modules:
+      StringUtils
+      Paths_StepaBot
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , discord-haskell
+    , load-env
+    , text
+  default-language: Haskell2010

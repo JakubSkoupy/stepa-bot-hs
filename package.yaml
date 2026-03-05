@@ -1,0 +1,21 @@
+name: StepaBot
+version: 0.1.0.0
+license: MIT
+author: "Jakub Skoupý"
+maintainer: "jakub.skoupy02@gmail.com"
+copyright: "Jakub Skoupý 2026"
+
+extra-source-files:
+  - README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+  - discord-haskell
+  - text
+  - bytestring
+  - load-env
+
+executables:
+  my-bot-exe:
+    main: Main.hs
+    source-dirs: src
