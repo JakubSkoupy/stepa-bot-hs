@@ -3,14 +3,15 @@
 
 module Main (main) where
 
-import Control.Monad (void, when)
-import Data.Maybe (fromMaybe)
-import Data.Text (Text, isPrefixOf, pack, split, take, toLower, unpack, unwords)
-import qualified Data.Text as T
+import Commands.Boxeri (boxeri)
+import Commands.Podminka (podminka)
+import Control.Monad
+import Data.Maybe
+import Data.Text
 import Discord
 import qualified Discord.Requests as R
 import Discord.Types
-import LoadEnv (loadEnv)
+import LoadEnv
 import StringUtils as S
 import System.Environment (lookupEnv)
 
@@ -35,12 +36,8 @@ eventHandler event = case event of
 
 handleCommand :: Message -> [Text] -> DiscordHandler ()
 handleCommand m ("boxeri" : args) = boxeri m args
+handleCommand m ("podminka" : args) = podminka m args
 handleCommand m _ = sendUnknown m
-
-boxeri :: Message -> [Text] -> DiscordHandler ()
-boxeri msg args =
-  let id = messageChannelId msg
-   in void $ restCall (R.CreateMessage id (pack "Jak rikaji boxeri, " <> (T.unwords args)))
 
 sendUnknown :: Message -> DiscordHandler ()
 sendUnknown msg = void $ restCall (R.CreateMessage (messageChannelId msg) "Tak tenhle prikaz neznam!")
