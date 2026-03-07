@@ -18,6 +18,9 @@ dependencies:
   - aeson
   - containers
   - unordered-containers
+  - hxt
+  - hxt-xpath
+  - hxt-curl
 
 executables:
   my-bot-exe:
