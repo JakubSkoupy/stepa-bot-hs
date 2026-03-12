@@ -34,6 +34,13 @@ podminka msg [] = do
   sendToMessageChannel msg responseMessage
 podminka msg args = sendToMessageChannel msg $ podminkaStr args
 
+-- Trivially returns a string message from the command arguments
+podminkaStr :: [Text] -> Text
+podminkaStr (x : _)
+  | x == pack "pomoc" =
+      pack "Proste napis !podminka, a ja ti reknu jak je na kotelne"
+podminkaStr _ = pack "Ja nevim co s tim. Zkus pouzit !podminka pomoc"
+
 ------------------------------------------------------------------------------------------
 --- API HANDLING
 ------------------------------------------------------------------------------------------
@@ -55,14 +62,3 @@ ioToMaybe action = (fmap Just action) `E.catch` exceptionHandler
   where
     exceptionHandler :: SomeException -> IO (Maybe a)
     exceptionHandler _ = pure Nothing
-
-------------------------------------------------------------------------------------------
---- Trivial utils
-------------------------------------------------------------------------------------------
-
--- Trivially returns a string message from the command arguments
-podminkaStr :: [Text] -> Text
-podminkaStr (x : _)
-  | x == pack "pomoc" =
-      pack "Proste napis !podminka, a ja ti reknu jak je na kotelne"
-podminkaStr _ = pack "Ja nevim co s tim. Zkus pouzit !podminka pomoc"

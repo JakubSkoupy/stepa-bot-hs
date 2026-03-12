@@ -5,6 +5,7 @@ module Main (main) where
 
 import Commands.Boxeri (boxeri)
 import Commands.Podminka (podminka)
+import Commands.Sloup (sloup)
 import Control.Monad
 import Data.Maybe
 import Data.Text
@@ -20,7 +21,11 @@ main = do
   _ <- loadEnv
   token <- lookupEnv "DISCORD_BOT_TOKEN"
   let tokenStr = fromMaybe "No token found" token
-  let dsOptions = def {discordToken = pack tokenStr, discordOnEvent = eventHandler}
+  let dsOptions =
+        def
+          { discordToken = pack tokenStr,
+            discordOnEvent = eventHandler
+          }
 
   putStrLn "StepaBot starting"
   runDiscord dsOptions
@@ -37,6 +42,7 @@ eventHandler event = case event of
 handleCommand :: Message -> [Text] -> DiscordHandler ()
 handleCommand m ("boxeri" : args) = boxeri m args
 handleCommand m ("podminka" : args) = podminka m args
+handleCommand m ("sloup" : args) = sloup m args
 handleCommand m _ = sendUnknown m
 
 sendUnknown :: Message -> DiscordHandler ()

@@ -4,6 +4,7 @@
 module Utils.ApiUtils where
 
 import Control.Exception
+import qualified Control.Exception as E
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as L8
 import qualified Data.Map.Strict as M
@@ -19,8 +20,8 @@ import Network.HTTP.Simple
 ------------------------------------------------------------------------------------------
 --- API CLIENT ACTIONS
 ------------------------------------------------------------------------------------------
-apiGet :: Text -> a -> IO Text
-apiGet url a = do
+apiGet :: Text -> IO Text
+apiGet url = do
   request <- parseRequest $ unpack url
   response <- httpLBS request
   return $ pack $ L8.unpack $ getResponseBody response
@@ -37,6 +38,12 @@ apiGetObjPreprocess url preprocessor = do
   response <- httpLBS request
   let cleaned = preprocessor (getResponseBody response)
   decodeWithLog cleaned
+
+ioToMaybe :: IO a -> IO (Maybe a)
+ioToMaybe action = (fmap Just action) `E.catch` exceptionHandler
+  where
+    exceptionHandler :: SomeException -> IO (Maybe a)
+    exceptionHandler _ = pure Nothing
 
 ------------------------------------------------------------------------------------------
 --- JSON UTILS
