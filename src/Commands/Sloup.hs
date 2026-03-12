@@ -45,25 +45,27 @@ data SloupTable = SloupTable {rows :: [Text]}
 
 -- Top level command handler
 sloup :: Message -> [Text] -> DiscordHandler ()
-sloup msg [] = do
-  response <- liftIO handleSloupRequest
+sloup msg args = do
+  response <- liftIO $ handleSloupRequest args
   sendToMessageChannel msg $ response
-sloup msg args = sendToMessageChannel msg $ sloupStr args
 
-handleSloupRequest :: IO Text
-handleSloupRequest = do
+handleSloupRequest :: [Text] -> IO Text
+handleSloupRequest args = do
   tableM <- ioToMaybe $ scrapeSloupTable apiAddress xpath_tab
-  pure $ fromMaybe (pack "Nic jsem nezjistil") $ fmap formatSloupTable (join tableM)
-
-headMay :: [a] -> Maybe a
-headMay (x : xx) = Just x
-headMay _ = Nothing
+  pure $ fromMaybe (pack "Nic jsem nezjistil") $ case args of
+    [arg] | arg == pack "table" -> fmap formatSloupTable (join tableM)
+    [] -> fmap formatSloupSimple (join tableM)
+    _ -> Just $ pack "Takovyhle argumenty neznam"
 
 ioToMaybe :: IO a -> IO (Maybe a)
 ioToMaybe action = (fmap Just action) `E.catch` exceptionHandler
   where
     exceptionHandler :: SomeException -> IO (Maybe a)
     exceptionHandler _ = pure Nothing
+
+headMay :: [a] -> Maybe a
+headMay (x : xx) = Just x
+headMay _ = Nothing
 
 ------------------------------------------------------------------------------------------
 --- Scraping utils
@@ -128,6 +130,12 @@ extractTextNode _ = Nothing
 ------------------------------------------------------------------------------------------
 --- Formatting utils
 ------------------------------------------------------------------------------------------
+formatSloupSimple :: [SloupTableRow] -> Text
+formatSloupSimple rows =
+  case headMay (drop 1 rows) of
+    Just row -> pack "Hladina vody je " <> levelCm row <> pack " cm."
+    Nothing -> pack "Ta tabulka je nejaka divna. Moc jsem z ni nezjistil."
+
 formatSloupRow :: SloupTableRow -> Text
 formatSloupRow row = pack "| " <> (T.intercalate (pack " | ") $ deconstructSloupTableRow row) <> pack " |"
 
